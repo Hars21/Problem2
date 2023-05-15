@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+        crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"
+        integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js"
+        integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ"
+        crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Form</title>
+</head>
+
+<body>
+    <form id="imageForm" method="post" enctype="multipart/form-data" style="width: 900px; margin: 20px;">
+        <div class="row mb-3">
+            <label for="title" class="col-sm-2 col-form-label">Image Title:</label>
+            <div class="col-sm-10">
+                <input type="text" id="title" class="form-control" name="title" required>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="description" class="col-sm-2 col-form-label">Image Description:</label>
+            <div class="col-sm-10">
+                <input type="text" id="description" class="form-control" name="description" required>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="image" class="col-sm-2 col-form-label">Image:</label>
+            <div class="col-sm-10">
+                <input type="file" id="image" class="form-control" name="image" accept="image/*" required>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="category" class="col-sm-2 col-form-label">Category:</label>
+            <div class="col-sm-10">
+                <select id="category" class="form-select" name="category" required>
+                    <option value="">Select Category</option>
+                    <option value="people">People</option>
+                    <option value="tech">Tech</option>
+                    <option value="entertainment">Entertainment</option>
+                </select>
+            </div>
+        </div>
+
+        <fieldset class="row mb-3">
+            <legend class="col-form-label col-sm-2 pt-0">Item for Sale</legend>
+            <div class="col-sm-10">
+                <div class="form-check">
+                    <input type="radio" id="yes" class="form-check-input" name="sale" value="yes" required>
+                    <label for="yes" class="form-check-label">Yes</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" id="no" class="form-check-input" name="sale" value="no">
+                    <label for="no" class="form-check-label">No</label>
+                </div>
+            </div>
+        </fieldset>
+
+        <div id="priceContainer" style="display:none;">
+            <label for="price">Item Price:</label>
+            <input type="text" id="price" name="price">
+            <br>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-sm-10 offset-sm-2">
+                <div class="form-check">
+                    <input type="checkbox" id="terms" class="form-check-input" name="terms" required>
+                    <label for="terms" class="form-check-label">Accept T&C</label>
+                </div>
+            </div>
+        </div>
+        <div style="display: flex; flex-direction: row; justify-content: center;">
+            <section>
+                <button onclick="cancleform()" class="btn btn-primary">Cancel</button>
+            </section>
+            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+            <section><input type="submit" class="btn btn-primary" value="Submit"></section>
+        </div>
+    </form>
+</body>
+<script>
+    var form = document.getElementById('imageForm');
+    var title = document.getElementById('title').value;
+    var description = document.getElementById('description').value;
+    var image = document.getElementById('image').files[0];
+    var category = document.getElementById('category').value;
+    var sale = document.getElementsByName('sale');
+    var price = document.getElementById('price').value;
+    var accept = document.getElementById('terms').checked;
+
+    form.addEventListener('submit', async function (event) {
+        // Prevent the form from submitting
+        event.preventDefault();
+
+        // Validate the form fields
+        // let isValid = true;
+        // if (title.value.trim() === '') {
+        //     isValid = false;
+        //     // Show an error message for the title field
+        //     title.nextElementSibling.textContent = 'Please enter a title';
+        // }
+        // // else {
+        // //     // Clear the error message for the title field
+        // //     title.nextElementSibling.textContent = '';
+        // // }
+
+        // if (description.value.trim() === '') {
+        //     isValid = false;
+        //     // Show an error message for the description field
+        //     description.nextElementSibling.textContent = 'Please enter a description';
+        // }
+        // //  else {
+        // //     // Clear the error message for the description field
+        // //     description.nextElementSibling.textContent = '';
+        // // }
+
+        // if (image.files.length === 0) {
+        //     isValid = false;
+        //     // Show an error message for the image field
+        //     image.nextElementSibling.textContent = 'Please select an image';
+        // } else if (image.files[0].width < 2000) {
+        //     isValid = false;
+        //     // Show an error message for the image field
+        //     image.nextElementSibling.textContent = 'The image width must be at least 2000 pixels';
+        // }
+        // // else {
+        // //     // Clear the error message for the image field
+        // //     image.nextElementSibling.textContent = '';
+        // // }
+
+        // if (category.value === '') {
+        //     isValid = false;
+        //     // Show an error message for the category field
+        //     category.nextElementSibling.textContent = 'Please select a category';
+        // }
+        // //  else {
+        // //     // Clear the error message for the category field
+        // //     category.nextElementSibling.textContent = '';
+        // // }
+
+        // let saleSelected = false;
+        // for (let i = 0; i < sale.length; i++) {
+        //     if (sale[i].checked) {
+        //         saleSelected = true;
+        //         break;
+        //     }
+        // }
+        // if (!saleSelected) {
+        //     isValid = false;
+        //     // Show an error message for the sale field
+        //     sale[0].nextElementSibling.textContent = 'Please select whether the item is for sale or not';
+        // }
+        // // else {
+        // //     // Clear the error message for the sale field
+        // //     sale[0].nextElementSibling.textContent = '';
+        // // }
+
+        // if (sale[0].checked && price.value.trim() === '') {
+        //     isValid = false;
+        //     // Show an error message for the price field
+        //     price.nextElementSibling.textContent = 'Please enter a price for the item';
+        // }
+        // //  else {
+        // //     // Clear the error message for the price field
+        // //     price.nextElementSibling.textContent = '';
+        // // }
+
+        // if (!accept.checked) {
+        //     isValid = false;
+        //     // Show an error message for the accept field
+        //     accept.nextElementSibling.textContent = 'Please accept the terms and conditions';
+        // }
+        // // else {
+        // //     // Clear the error message for the accept field
+        // //     accept.nextElementSibling.textContent = '';
+        // // }
+
+        // if (isValid) {
+        //     // Submit the form
+        //     // let  title =title.value, description =description.value, image = image.files[0], category = category.value, selected = saleSelected, accept = accept.checked 
+        //     // const data = { title, description, image, category, selected, accept}
+        //     console.log(data)
+        //     form.submit();
+        //     submitform()
+        // }
+        var data = { title, description, image, category, sale, price, accept }
+
+        await fetch("http://localhost:8080/form/createForm", {
+            method: "POST",
+
+            body: JSON.stringify(data)
+            // body: data
+        }).then(response => response.json())
+            .then(result => {
+                console.log(result); // Handle API response
+                // Reset form
+                document.getElementById("myForm").reset();
+            })
+            .catch(error => {
+                console.error(error); // Handle error
+            });
+    })
+
+    function cancleform() {
+        window.open("./index.html")
+    }
+    function submitform() {
+        window.open("./index.html")
+    }
+</script>
+
+</html>

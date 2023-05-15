@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+        crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"
+        integrity="sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js"
+        integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ"
+        crossorigin="anonymous"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div style="display: flex; justify-content: flex-end;">
+        <button onclick="toggleCreateForm()" class="btn btn-primary">Create New Record</button>
+        &nbsp&nbsp&nbsp&nbsp&nbsp
+        <button onclick="getData()" class="btn btn-primary">Reload</button>
+    </div>
+    <div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Title</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Image Preview</th>
+                    <th scope="col">Paid</th>
+                    <th scope="col">Control Options</th>
+                </tr>
+            </thead>
+            <tbody id="tableData" class="table-hover">
+                <!-- More rows here -->
+            </tbody>
+        </table>
+    </div>
+
+    <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel">Image Preview</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <img id="modalImage" src="#" alt="Preview Image" style="width: 900px; ">
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    function toggleCreateForm() {
+        window.open("./createForm.html")
+    }
+
+    async function getData() {
+        const response = await fetch("http://localhost:8080/form/getForm")
+        //    .then((res) => {
+        const data = await response.json()
+        var resData = []
+        data.data.forEach(element => {
+            resData += `<tr class="align-middle">`;
+            resData += "<td>" + element.title + "</td>"
+            resData += "<td>" + element.category + "</td>"
+            resData += `<td id="imageTd">` + `<img id="imageresource" src="${element.imgurl}" style="width: 300px;" alt="" />` + "</td>"
+            resData += "<td>" + element.item_for_sale + "</td>"
+            resData += "<td>" + `<a href="editForm.html" class="btn btn-secondary">Edit</a>` + "&nbsp&nbsp&nbsp&nbsp" + `<a href="#" onclick="deleteRecord(2)" class="btn btn-danger">Delete</a>` + "</td>"
+            resData += "</tr>";
+        });
+
+        return document.getElementById("tableData").innerHTML = resData
+    }
+
+    const tableBody = document.getElementById('imageTd');
+    const modalImage = document.getElementById('modalImage');
+
+    // Add an event listener to the input element
+    tableBody.addEventListener('click', function (event) {
+        // Get the selected file
+        const file = event.target.files[0];
+
+        // Create a FileReader object
+        const reader = new FileReader();
+
+        // Set up the FileReader onload event
+        reader.onload = function () {
+            // Create a new table row
+            const row = document.createElement('tr');
+
+            // Create a table cell for the thumbnail image
+            const thumbnailCell = document.createElement('td');
+            const thumbnailImg = document.createElement('img');
+            thumbnailImg.src = reader.result;
+            thumbnailImg.alt = 'Thumbnail';
+            thumbnailImg.style.maxWidth = '100px';
+            thumbnailImg.addEventListener('click', function () {
+                modalImage.src = reader.result;
+                $('#imageModal').modal('show'); // Show the modal
+            });
+            thumbnailCell.appendChild(thumbnailImg);
+
+            // Create a table cell for the image name
+            const nameCell = document.createElement('td');
+            nameCell.textContent = file.name;
+
+            // Append the cells to the row
+            row.appendChild(thumbnailCell);
+            row.appendChild(nameCell);
+
+            // Append the row to the table body
+            tableBody.appendChild(row);
+        };
+
+        // Read the selected file as a data URL
+        reader.readAsDataURL(file);
+    });
+</script>
+
+</html>

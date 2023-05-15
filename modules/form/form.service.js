@@ -9,10 +9,10 @@ import dtUtil from './../../utility/dateUtility.js';
 
 export default  {
     login,
-    logout,
+    deleteForm,
     getform,
     createForm,
-    matchPassword,
+    updateForm,
     updatePassword
 };
 
@@ -58,31 +58,24 @@ async function login(req){
     }
 }
 
-async function logout(req){
+async function deleteForm(req){
     try{
         let validationError = [];
-        validation.issetNotEmpty(req.body.credential) ? true : validationError.push({ field: 'Email/Phone', message: 'Mandatory parameter.' });
-        validation.issetNotEmpty(req.body.password) ? true : validationError.push({ field: 'Password', message: 'Mandatory parameter.' });
+        validation.issetNotEmpty(req.query.id) ? true : validationError.push({ field: 'ID', message: 'Mandatory parameter.' });
         if (validationError.length == 0) {
 
-            let email_phone = req.body.credential
-            let pass = req.body.password
+  
 
-            let acc_sql = `Select * from public.team_table where (username = '${email_phone}' or phonenumber = '${email_phone}') and password = '${pass}'`
-            let acc_sql_res = await client.query(acc_sql)
-            let account_type =  acc_sql_res.rows[0]['id']
-            console.log(account_type);
+            let from_del_sql = `Delete from public.form where id = '${req.query.id}'`
+            let from_del_sql_res = await client.query(from_del_sql)
           
-            if(acc_sql_res.rows.length > 0){
-                let token_update_sql = `update public.team_table
-                                    set token = '', loggedin = '${false}', logout_date_time = '${dtUtil.todayDatetime()}'
-                                    where id = '${acc_sql_res.rows[0]['id']}'`
-                let token_update_res = await client.query(token_update_sql)
-                response.response = { 'success': true ,"message":"Logged Out Sucessfully"};
+            if(from_del_sql_res.rowCount){
+              
+                response.response = { 'success': true ,"message":"Form deleted Successfully"};
                 response.status = 200;
                 return response;
             }else{
-                response.response = { 'success': true, "message": "No User Found !" };
+                response.response = { 'success': true, "message": "No data found to delete!" };
                 response.status = 200;
                 return response;
             }
@@ -164,51 +157,51 @@ async function createForm(req) {
     }
   }
 
-  async function matchPassword(req) {
+  async function updateForm(req) {
     try {
-        let validationError = [];
-        validation.issetNotEmpty(req.body.phonenumber) ? true : validationError.push({ "field": "phonenumber", "message": "Mandatory parameter." });
-        validation.issetNotEmpty(req.body.old_password) ? true : validationError.push({ "field": "old_password", "message": "Mandatory parameter." });
+
+        var validationError = [];
+        validation.issetNotEmpty(req.query.id) ? true : validationError.push({ "field": "id", "message": "Mandatory parameter." });
+
         if (validationError.length == 0) {
+            let fieldValue = [];
+            let whereClouse = [];
+            whereClouse.push({ "field": "id", "value": req.query.id });
+          
+            let title = req.body.title ? req.body.title : ''
+            
+           
+            let category = req.body.category ? req.body.category : ''
+            
+         
+            let imgurl =  req.body.imgurl ?req.body.imgurl : ''
+            
+            let item_for_sale = req.body.item_for_sale ? req.body.item_for_sale : false
+            let item_price = req.body.item_price ? req.body.item_price : 0
 
-            let fieldValue = '*'
-            let whereClouse = [
-                { "fieldName": "phone_number__c", "fieldValue": `${req.body.phonenumber}` },
-                { "fieldName": "password", "fieldValue": `${req.body.old_password}` }
-            ];
+                var updateVisitInfo = `Update public.form set title = '${title}', category = '${category}', imgurl = '${imgurl}', item_for_sale = '${item_for_sale}', item_price = '${item_price}' where id = ${ req.query.id }`
+                let updateVisitInfo_res = await client.query(updateVisitInfo)
+                console.log(updateVisitInfo_res)
 
-            let match_password_sql = qry.SelectAllQry(fieldValue, 'public.team_table', whereClouse, '', '', '')
-            let match_password_result = await client.query(match_password_sql)
-
-            if (match_password_result.rows.length > 0) {
-                let randomString = await cryptoRandomStringAsync({length: 18, type: 'alphanumeric'});
-                let password_sql = `UPDATE public.team_table SET password='${randomString}' where sfid = '${match_password_result.rows[0].sfid}'`;
-                let update_token_res = await client.query(password_sql);
-
-                if (update_token_res.rowCount) {
-                    response.response = { success: true, message: 'Old password is correct', token_generated: randomString };
+                if (updateVisitInfo_res.rowCount > 0) {
+                    response.response = { 'success': true, "data": 'Form Updated' };
                     response.status = 200;
                     return response;
                 } else {
-                    response.status = 200;
-                    response.response = { success: false, message: 'Password matching process failed' };
+                    response.response = { 'success': false, "data": [], "message": "Error in updating" };
+                    response.status = 400;
                     return response;
                 }
-            } else {
-                response.status = 200;
-                response.response = { success: false, message: 'Password does not match' };
-                return response;
-            }
+           
         } else {
-            response.response = { 'success': false, "message": "Mandatory parameter(s) are missing.", error: validationError };
+            //console.log(validationError)
+            response.response = { 'success': false, "data": [], "message": "Mandatory parameter(s) are missing.", error : validationError };
             response.status = 400;
             return response;
         }
     } catch (e) {
-        let error_log = `Error ::::: 015 ::::: ${e}`
-        console.log(error_log);
-        func.mailErrorLog(error_log, req.route['path'], req.body, req.query, req.headers.token, req.headers['client-name']);
-        response.response = { success: false, message: 'Internal Server error.' };
+        console.log("Error :::::>>>>>>> 010 :::::::", e);
+        response.response = { 'success': false, "data": [], "message": "Internal server error." };
         response.status = 500;
         return response;
     }

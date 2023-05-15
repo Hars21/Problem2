@@ -7,10 +7,10 @@ import validation from '../../utility/validation.js';
 
 
 router.post('/createForm',cors(), createForm);
-router.post('/logout', logout);
+router.get('/deleteForm',cors() ,deleteForm);
 router.get('/getform',cors(), getform);
 router.post('/signup', signup);
-router.post('/matchPassword', matchPassword);
+router.post('/updateForm',cors() ,updateForm);
 
 
 
@@ -28,9 +28,9 @@ async function createForm(req, res, next) {
   }
 }
 
-async function logout(req, res, next) {
+async function deleteForm(req, res, next) {
   try {
-    formServices.logout(req)
+    formServices.deleteForm(req)
         .then(states => res.status(states.status).json(states.response))
         .catch(err => next(err));
    
@@ -61,15 +61,12 @@ async function signup(req, res, next) {
   }
 }
 
-async function matchPassword(req, res, next) {
+async function updateForm(req, res, next) {
   try {
-    if (!_.isEmpty(req.headers.token) && await validation.isValidToken(req.headers.token) != false) {
-      loginServices.matchPassword(req)
+      formServices.updateForm(req)
         .then(states => res.status(states.status).json(states.response))
         .catch(err => next(err));
-    } else {
-      res.status(400).json({ "success": false, "message": "You do not have authorised access." });
-    }
+   
   } catch (e) {
     res.status(500).json({ "success": false, "error": "Internal server error." });
   }

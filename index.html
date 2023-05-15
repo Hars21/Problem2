@@ -62,6 +62,16 @@
         window.open("./createForm.html")
     }
 
+    async function deleteRecord(id) {
+        const deleteRecord = await fetch(`http://localhost:8080/form/deleteForm?id=${id}`)
+
+        const response = await deleteRecord.json();
+
+        if (response.success) {
+            getData()
+        }
+    }
+
     async function getData() {
         const response = await fetch("http://localhost:8080/form/getForm")
         //    .then((res) => {
@@ -73,7 +83,7 @@
             resData += "<td>" + element.category + "</td>"
             resData += `<td id="imageTd">` + `<img id="imageresource" src="${element.imgurl}" style="width: 300px;" alt="" />` + "</td>"
             resData += "<td>" + element.item_for_sale + "</td>"
-            resData += "<td>" + `<a href="editForm.html" class="btn btn-secondary">Edit</a>` + "&nbsp&nbsp&nbsp&nbsp" + `<a href="#" onclick="deleteRecord(2)" class="btn btn-danger">Delete</a>` + "</td>"
+            resData += "<td>" + `<a href="editForm.html" class="btn btn-secondary">Edit</a>` + "&nbsp&nbsp&nbsp&nbsp" + `<button onclick="deleteRecord(${element.id})" class="btn btn-danger">Delete</button>` + "</td>"
             resData += "</tr>";
         });
 

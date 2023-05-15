@@ -53,23 +53,11 @@
 
         <fieldset class="row mb-3">
             <legend class="col-form-label col-sm-2 pt-0">Item for Sale</legend>
-            <div class="col-sm-10">
-                <div class="form-check">
-                    <input type="radio" id="yes" class="form-check-input" name="sale" value="yes" required>
-                    <label for="yes" class="form-check-label">Yes</label>
-                </div>
-                <div class="form-check">
-                    <input type="radio" id="no" class="form-check-input" name="sale" value="no">
-                    <label for="no" class="form-check-label">No</label>
-                </div>
+            <div class="form-check">
+                <input type="checkbox" id="sales" class="form-check-input" name="sale" value="yes" required
+                    onchange="getPrice()">
             </div>
         </fieldset>
-
-        <div id="priceContainer" style="display:none;">
-            <label for="price">Item Price:</label>
-            <input type="text" id="price" name="price">
-            <br>
-        </div>
 
         <div class="row mb-3">
             <div class="col-sm-10 offset-sm-2">
@@ -89,19 +77,36 @@
     </form>
 </body>
 <script>
-    var form = document.getElementById('imageForm');
-    var title = document.getElementById('title').value;
-    var description = document.getElementById('description').value;
-    var image = document.getElementById('image').files[0];
-    var category = document.getElementById('category').value;
-    var sale = document.getElementsByName('sale');
-    var price = document.getElementById('price').value;
-    var accept = document.getElementById('terms').checked;
+    const form = document.getElementById('imageForm');
+    const title = document.getElementById('title').value;
+    const description = document.getElementById('description').value;
+    const imgurl = document.getElementById('image').files[0];
+    const category = document.getElementById('category').value;
+    const item_for_sale = document.getElementById('sales').checked;
+    const item_price = document.getElementById('price');
+    const accept_tc = document.getElementById('terms').checked;
+    const priceToggle = false
+
+    document.getElementById('image').addEventListener("change", async function (e) {
+        console.log(document.getElementById('image').files);  
+
+    })
+
+    function getPrice() {
+        if (item_for_sale) {
+            return (
+                `<div id="priceContainer" style="display:none;">` +
+                `<label for="price">Item Price:</label>` +
+                `<input type="text" id="price" name="price">` +
+                `<br>` +
+                `</div>`
+            )
+        }
+    }
 
     form.addEventListener('submit', async function (event) {
         // Prevent the form from submitting
         event.preventDefault();
-
         // Validate the form fields
         // let isValid = true;
         // if (title.value.trim() === '') {
@@ -193,7 +198,7 @@
         //     form.submit();
         //     submitform()
         // }
-        var data = { title, description, image, category, sale, price, accept }
+        var data = { title, description, category, item_for_sale, item_price, accept_tc }
 
         await fetch("http://localhost:8080/form/createForm", {
             method: "POST",

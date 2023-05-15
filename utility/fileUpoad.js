@@ -19,7 +19,7 @@ app.use(bodyParser.json());
 const upload = multer({
   storage: multerS3({
     s3: s3,
-    bucket: process.env.AWS_BUCKET,
+    bucket: "cloud-cube-us2",
     key: function(req, file, cb) {
       // console.log(file);
       const myFileName = process.env.CLOUDCUBE_BUCKET + Date.now()+file.originalname;
